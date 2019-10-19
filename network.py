@@ -49,9 +49,11 @@ class Network(object):
             for mini_batch in mini_batches:
                 self.update_mini_batch(mini_batch, eta)
             if test_data:
-                print('Epoch {}: {}/{}'.format(j, self.evaluate(test_data), n_test))
+                print('Epoch {}: {}/{}'.format(j, self.evaluate_test(test_data), n_test))
             else:
-                print('Epoch {} complete'.format(j))
+                print('Epoch {} complete, and training accuracy: {}/{}'.format(j, self.evaluate_train(training_data),
+                                                                               len(training_data)))
+                print('The Error at epoch {} is {}'.format(j, self.evaluate_cost(training_data)))
 
     def update_mini_batch(self, mini_batch, eta):
         """
@@ -95,12 +97,21 @@ class Network(object):
             nabla_w[-l] = np.dot(delta, activations[-l - 1].T)
         return nabla_b, nabla_w
 
-    def evaluate(self, test_data):
+    def evaluate_test(self, test_data):
         test_results = [(np.argmax(self.feedforward(x)), y) for (x, y) in test_data]
         return sum(int(x == y) for (x, y) in test_results)
 
+    def evaluate_train(self, train_data):
+        train_results = [(np.argmax(self.feedforward(x)), np.argmax(y)) for (x, y) in train_data]
+        return sum(int(x == y) for (x, y) in train_results)
+
+    def evaluate_cost(self, train_data):
+        cost = np.mean([sum((self.feedforward(x) - y) ** 2) for (x, y) in train_data])
+        return cost
+
 
 # Miscellaneous functions
+
 def sigmoid(z):
     return 1 / (1 + np.exp(-z))
 
@@ -108,7 +119,6 @@ def sigmoid(z):
 def sigmoid_prime(z):
     """derivative of the sigmoid function."""
     return sigmoid(z) * (1 - sigmoid(z))
-
 
 # import mnist_loader
 # training_data, validation_data, test_data = mnist_loader.load_data_wrapper()
