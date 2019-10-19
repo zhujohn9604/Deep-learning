@@ -10,7 +10,7 @@ This is a good source for learning neural betworks, and strongly recommended. An
 
 A few important points when running the network.py program:
 
-1. The label of training data have to be pre-processed with one hot encoding.
+1. The label of training data has to be pre-processed with one hot encoding.
 
 2. The label of test data should keep in the original format. 
 
